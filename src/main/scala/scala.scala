@@ -1,6 +1,6 @@
 import info.mukel.telegrambot4s.api.{Commands, Polling, TelegramBot}
 import info.mukel.telegrambot4s.methods.{SendMessage, SendSticker}
-import info.mukel.telegrambot4s.models.Message
+import info.mukel.telegrambot4s.models._
 import info.mukel.telegrambot4s.Implicits._
 import condition._
 import Matcher._
@@ -23,8 +23,23 @@ class MainFunctionalityBot(val token: String) extends TelegramBot with Polling w
     api.request(SendSticker(message.chat.id, "BQADAgADOwMAAs7Y6AudsK8PsN71zAI"))
   }
 
-  on(RegexpTextMatcher("(?i).*fuck it.*")) { implicit message =>
+  on(RegexpTextMatcher("(?i).*fuck.*")) { implicit message =>
     reply("Fuck You too")
+  }
+
+  on(ExactTextMatcher("Button")) { message =>
+    val result = api.request(
+      SendMessage(message.chat.id, "not empty", replyMarkup = Some(
+        InlineKeyboardMarkup(
+          List(
+            List(InlineKeyboardButton("I am a button", url=Some("google.com"))),
+            List(
+              InlineKeyboardButton("I am a button in a second list", url=Some("foodpanda.hk")),
+              InlineKeyboardButton("I am a second button in a second list", url=Some("delivery-club.ru")))
+          )
+        )
+      ))
+    )
   }
 
   on(StickerSentMatcher) { message =>
